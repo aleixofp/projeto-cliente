@@ -7,6 +7,8 @@ import com.fpa.testeuol.projetocliente.entity.geo.GeoDto;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.fpa.testeuol.projetocliente.entity.geo.GeoModel;
 import org.slf4j.Logger;
@@ -54,4 +56,14 @@ public class ClienteService {
         return new ClienteDto(cliente);
     }
 
+    public void deleta(Long idCliente) {
+        repositorioCliente.deleteById(idCliente);
+    }
+
+    public List<ClienteDto> listaClientes(){
+        return repositorioCliente.findAll()
+                .stream()
+                .map(ClienteDto::new)
+                .collect(Collectors.toList());
+    }
 }

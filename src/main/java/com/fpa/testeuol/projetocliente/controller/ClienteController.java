@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/cliente")
 public class ClienteController {
@@ -60,7 +62,22 @@ public class ClienteController {
     }
 
     @DeleteMapping(value="/deletar/{idCliente}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deletar(@PathVariable("idCliente") Long idCliente){
+    public ResponseEntity<ClienteApiResponse> deletar(@PathVariable("idCliente") Long idCliente){
+
+        ClienteApiResponse response = new ClienteApiResponse("deletar");
+        try {
+            servicoCliente.deleta(idCliente);
+            response.setMessage("Cliente ID " + idCliente + " excluído.");
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e){
+            response.setMessage("Não foi possível excluir cliente ID " + idCliente);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
+    }
+
+    @GetMapping(value="/listarClientes", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<ClienteDto>> listar(){
         return null;
     }
 
