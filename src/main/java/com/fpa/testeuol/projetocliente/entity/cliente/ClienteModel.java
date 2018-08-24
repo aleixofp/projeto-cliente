@@ -17,8 +17,7 @@ import javax.persistence.Table;
 public class ClienteModel {
 
     @Id
-    @SequenceGenerator(allocationSize = 1, name = "cliente_id_seq_gen", sequenceName = "cliente_id_seq")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cliente_id_seq_gen")
+    @GeneratedValue
     @Column(name = "id_cliente")
     private Long id;
 

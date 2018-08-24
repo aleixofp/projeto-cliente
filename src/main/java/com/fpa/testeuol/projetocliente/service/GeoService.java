@@ -11,8 +11,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.fpa.testeuol.projetocliente.entity.geo.GeoModel;
 import org.slf4j.Logger;
@@ -74,7 +76,13 @@ public class GeoService {
         URL url = new URL(AMAZON_CHECK_IP_WS);
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()))){
-            return br.readLine();
+
+            String[] ips = br.readLine().replace(" ", "").split(",");
+            int quantidadeIps = ips.length;
+            if (quantidadeIps > 1)
+                return ips[quantidadeIps -1];
+            else
+                return ips[0];
         } catch (IOException e){
             logger.error("Erro ao se conectar a API " + AMAZON_CHECK_IP_WS, e);
             return "0.0.0.0";
@@ -95,10 +103,28 @@ public class GeoService {
         InputStream stream = url.openStream();
         HashMap data = mapper.readValue(stream, HashMap.class);
 
-        clima.setMinTemp(data.get("min_temp").toString());
-        clima.setMaxTemp(data.get("max_temp").toString());
+        Map climaConfiavel = recuperaClimaConfiavel((List)data.get("consolidated_weather"));
+
+        clima.setMinTemp(climaConfiavel.get("min_temp").toString());
+        clima.setMaxTemp(climaConfiavel.get("max_temp").toString());
+        clima.setCurTemp(climaConfiavel.get("the_temp").toString());
 
         return clima;
+    }
+
+    private Map recuperaClimaConfiavel(List climasConsolidados){
+
+        Map climaConfiavel = new HashMap();
+        int maiorPrevisibilidade = 0;
+        for(Object o: climasConsolidados){
+            HashMap dados = (HashMap)o;
+            Integer previsibilidade = Integer.parseInt(dados.get("predictability").toString());
+            if (previsibilidade > maiorPrevisibilidade) {
+                maiorPrevisibilidade = previsibilidade;
+                climaConfiavel = dados;
+            }
+        }
+        return climaConfiavel;
     }
 
 }

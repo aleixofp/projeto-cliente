@@ -8,6 +8,7 @@ import com.fpa.testeuol.projetocliente.entity.geo.GeoDto;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
+import com.fpa.testeuol.projetocliente.entity.geo.GeoModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,18 +29,16 @@ public class ClienteService {
     }
 
     public ClienteDto insere(String nome) {
-
-
         if (nome == null || nome.isEmpty()){
             throw new NullPointerException("Não é possivel inserir cliente com este nome: {" + nome + "}");
         }
         ClienteModel clienteInserido = this.repositorioCliente.save(new ClienteModel(nome));
 
         try {
-            servicoGeo.salvaDadosGeolocalizacao(clienteInserido);
+            GeoModel geoModel = servicoGeo.salvaDadosGeolocalizacao(clienteInserido);
+            clienteInserido.setGeo(geoModel);
         } catch (IOException e) {
             logger.error("Não foi possivel salvar dados de geolocalização do cliente salvo: " + nome, e);
-            return null;
         }
 
         return new ClienteDto(clienteInserido);
