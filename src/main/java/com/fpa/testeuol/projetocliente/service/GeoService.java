@@ -1,22 +1,21 @@
 package com.fpa.testeuol.projetocliente.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fpa.testeuol.projetocliente.data.GeoRepository;
+import com.fpa.testeuol.projetocliente.data.ClienteGeoRepository;
 import com.fpa.testeuol.projetocliente.entity.cliente.ClienteModel;
 import com.fpa.testeuol.projetocliente.entity.geo.ClimaDto;
-import com.fpa.testeuol.projetocliente.entity.geo.GeoDto;
+import com.fpa.testeuol.projetocliente.entity.geo.VigilanteGeoDto;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.fpa.testeuol.projetocliente.entity.geo.GeoModel;
+import com.fpa.testeuol.projetocliente.entity.cliente.ClienteGeoModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,42 +32,49 @@ public class GeoService {
     private static final String FORMAT = "json";
 
     private ObjectMapper mapper;
-    private GeoRepository repositorioGeo;
+    private ClienteGeoRepository repositorioGeo;
 
     @Autowired
-    public GeoService(ObjectMapper mapper, GeoRepository repositorioGeo){
+    public GeoService(ObjectMapper mapper, ClienteGeoRepository repositorioGeo){
         this.mapper = mapper;
         this.repositorioGeo = repositorioGeo;
     }
 
-    public GeoModel salvaDadosGeolocalizacao(ClienteModel cliente) throws IOException {
-        GeoDto geoAtual = recuperaGeolocalizacaoAtual();
+    public ClienteGeoModel salvaDadosGeolocalizacao(ClienteModel cliente) throws IOException {
+
+        logger.info("Salvando dados de Geolocalização do cliente");
+
+        VigilanteGeoDto geoAtual = recuperaGeolocalizacaoAtual();
         String latitude = geoAtual.getLatitude();
         String longitude = geoAtual.getLongitude();
+
+        logger.info("Latitude: " + latitude);
+        logger.info("Longitude: " + longitude);
+        logger.info("Cidade: " + geoAtual.getCityName());
 
         String localId = recuperaIdLocalizacao(latitude, longitude);
 
         ClimaDto clima = recuperaClimaLocalizacao(localId);
 
-        GeoModel geoModel = new GeoModel();
-        geoModel.setCliente(cliente);
-        geoModel.setCidade(geoAtual.getCityName());
-        geoModel.setMinTemp(Float.parseFloat(clima.getMinTemp()));
-        geoModel.setMaxTemp(Float.parseFloat(clima.getMaxTemp()));
-        geoModel.setCurTemp(Float.parseFloat(clima.getCurTemp()));
+        ClienteGeoModel clienteGeo = new ClienteGeoModel();
+        clienteGeo.setCliente(cliente);
+        clienteGeo.setCidade(geoAtual.getCityName());
+        clienteGeo.setMinTemp(Float.parseFloat(clima.getMinTemp()));
+        clienteGeo.setMaxTemp(Float.parseFloat(clima.getMaxTemp()));
+        clienteGeo.setCurTemp(Float.parseFloat(clima.getCurTemp()));
 
-        return repositorioGeo.save(geoModel);
+        return repositorioGeo.save(clienteGeo);
     }
 
-    public GeoDto recuperaGeolocalizacaoPorIp(String ip) throws IOException {
+    public VigilanteGeoDto recuperaGeolocalizacaoPorIp(String ip) throws IOException {
         URL url = new URL(String.format("%s/%s/%s", IP_GEO_API_BASE_URL, FORMAT, ip));
         InputStream stream = url.openStream();
         HashMap data = mapper.readValue(stream, HashMap.class);
         String geoValues = mapper.writeValueAsString(data.get("data"));
-        return mapper.readValue(geoValues, GeoDto.class);
+        return mapper.readValue(geoValues, VigilanteGeoDto.class);
     }
 
-    public GeoDto recuperaGeolocalizacaoAtual() throws IOException {
+    public VigilanteGeoDto recuperaGeolocalizacaoAtual() throws IOException {
         return recuperaGeolocalizacaoPorIp(recuperaIpMaquina());
     }
 

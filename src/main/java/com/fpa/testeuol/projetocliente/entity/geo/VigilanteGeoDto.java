@@ -2,7 +2,7 @@ package com.fpa.testeuol.projetocliente.entity.geo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class GeoDto {
+public class VigilanteGeoDto {
 
     private String ipv4;
 

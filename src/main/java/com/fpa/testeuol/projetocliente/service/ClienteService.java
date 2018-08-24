@@ -3,14 +3,12 @@ package com.fpa.testeuol.projetocliente.service;
 import com.fpa.testeuol.projetocliente.data.ClienteRepository;
 import com.fpa.testeuol.projetocliente.entity.cliente.ClienteDto;
 import com.fpa.testeuol.projetocliente.entity.cliente.ClienteModel;
-import com.fpa.testeuol.projetocliente.entity.geo.GeoDto;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.fpa.testeuol.projetocliente.entity.geo.GeoModel;
+import com.fpa.testeuol.projetocliente.entity.cliente.ClienteGeoModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +35,8 @@ public class ClienteService {
         ClienteModel clienteInserido = this.repositorioCliente.save(new ClienteModel(nome));
 
         try {
-            GeoModel geoModel = servicoGeo.salvaDadosGeolocalizacao(clienteInserido);
-            clienteInserido.setGeo(geoModel);
+            ClienteGeoModel clienteGeo = servicoGeo.salvaDadosGeolocalizacao(clienteInserido);
+            clienteInserido.setGeo(clienteGeo);
         } catch (IOException e) {
             logger.error("Não foi possivel salvar dados de geolocalização do cliente salvo: " + nome, e);
         }

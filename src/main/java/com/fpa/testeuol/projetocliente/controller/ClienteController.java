@@ -3,6 +3,8 @@ package com.fpa.testeuol.projetocliente.controller;
 import com.fpa.testeuol.projetocliente.entity.cliente.ClienteDto;
 import com.fpa.testeuol.projetocliente.response.ClienteApiResponse;
 import com.fpa.testeuol.projetocliente.service.ClienteService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,6 +23,8 @@ import java.util.List;
 @RequestMapping("/cliente")
 public class ClienteController {
 
+    private Logger logger = LoggerFactory.getLogger(ClienteController.class);
+
     private final ClienteService servicoCliente;
 
     @Autowired
@@ -28,9 +32,17 @@ public class ClienteController {
         this.servicoCliente = servicoCliente;
     }
 
+    /**
+     * Recupera um cliente (id e nome) pelo seu id na base.
+     * @param idCliente
+     * @return
+     */
     @GetMapping(value="/{idCliente}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ClienteApiResponse> recuperar(@PathVariable("idCliente") Long idCliente){
         ClienteApiResponse response = new ClienteApiResponse("recuperar");
+
+        logger.info("Recuperando dados do cliente ID " + idCliente);
+
         try {
             ClienteDto dados = servicoCliente.recupera(idCliente);
             response.setMessage("Cliente ID " + idCliente + " recuperado.");
@@ -45,6 +57,9 @@ public class ClienteController {
     @PostMapping(value="/inserir", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ClienteApiResponse> inserir(String nome){
         ClienteApiResponse response = new ClienteApiResponse("inserir");
+
+        logger.info("Inserindo cliente " + nome);
+
         try {
             ClienteDto dadosInseridos = servicoCliente.insere(nome);
             response.setMessage("Cliente " + nome + " inserido.");
@@ -65,6 +80,9 @@ public class ClienteController {
     public ResponseEntity<ClienteApiResponse> deletar(@PathVariable("idCliente") Long idCliente){
 
         ClienteApiResponse response = new ClienteApiResponse("deletar");
+
+        logger.info("Deletando cliente ID " + idCliente);
+
         try {
             servicoCliente.deleta(idCliente);
             response.setMessage("Cliente ID " + idCliente + " excluído.");
@@ -76,9 +94,17 @@ public class ClienteController {
 
     }
 
-    @GetMapping(value="/listarClientes", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value="/listar", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ClienteDto>> listar(){
-        return null;
+
+        logger.info("Listando clientes");
+
+        try {
+            List<ClienteDto> clientes = servicoCliente.listaClientes();
+            return ResponseEntity.ok(clientes);
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).build();
+        }
     }
 
 

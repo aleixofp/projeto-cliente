@@ -1,4 +1,4 @@
-package com.fpa.testeuol.projetocliente.entity.geo;
+package com.fpa.testeuol.projetocliente.entity.cliente;
 
 import com.fpa.testeuol.projetocliente.entity.cliente.ClienteModel;
 
@@ -11,8 +11,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "geo_cliente")
-public class GeoModel {
+@Table(name = "cliente_geo")
+public class ClienteGeoModel {
 
 	@Id
 	@GeneratedValue
@@ -32,10 +32,10 @@ public class GeoModel {
 	@Column(name = "temperatura_max")
 	private Float maxTemp;
 
-	@Column(name = "temperatura_cur")
+	@Column(name = "temperatura_atual")
 	private Float curTemp;
 
-	public GeoModel() {}
+	public ClienteGeoModel() {}
 
 	public Long getId() {
 		return id;
