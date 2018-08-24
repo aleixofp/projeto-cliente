@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
@@ -13,6 +14,7 @@ import javax.persistence.Table;
 public class ClienteModel {
 
     @Id
+    @SequenceGenerator(allocationSize = 1, initialValue = 1, name = "id_cliente_seq")
     @GeneratedValue
     @Column(name = "id_cliente")
     private Long id;

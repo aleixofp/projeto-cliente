@@ -56,7 +56,7 @@ public class GeoService {
 
         ClimaDto clima = recuperaClimaLocalizacao(localId);
 
-        ClienteGeoModel clienteGeo = new ClienteGeoModel();
+        ClienteGeoModel clienteGeo = cliente.getGeo();
         clienteGeo.setCliente(cliente);
         clienteGeo.setCidade(geoAtual.getCityName());
         clienteGeo.setMinTemp(Float.parseFloat(clima.getMinTemp()));

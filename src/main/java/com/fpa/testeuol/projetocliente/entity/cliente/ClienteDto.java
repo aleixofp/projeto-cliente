@@ -13,9 +13,19 @@ public class ClienteDto {
         if (model != null) {
             BeanUtils.copyProperties(model, this);
 
+            ClienteGeoModel clienteGeoModel = model.getGeo();
             if (this.clienteGeo == null){
                 this.clienteGeo = new ClienteGeoDto();
-                BeanUtils.copyProperties(model.getGeo(), this.clienteGeo);
+                this.clienteGeo.setIdCliente(model.getId());
+
+                if (clienteGeoModel != null){
+                    this.clienteGeo.setCidade(clienteGeoModel.getCidade());
+                    this.clienteGeo.setId(clienteGeoModel.getId());
+                    this.clienteGeo.setCurTemp(clienteGeoModel.getCurTemp());
+                    this.clienteGeo.setMinTemp(clienteGeoModel.getMinTemp());
+                    this.clienteGeo.setMaxTemp(clienteGeoModel.getMaxTemp());
+                }
+
             }
         }
     }

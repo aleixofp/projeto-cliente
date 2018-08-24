@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
@@ -15,6 +16,7 @@ import javax.persistence.Table;
 public class ClienteGeoModel {
 
 	@Id
+	@SequenceGenerator(allocationSize = 1, initialValue = 1, name = "id_geo_cliente_seq")
 	@GeneratedValue
 	@Column(name = "id_geo_cliente")
 	private Long id;
