@@ -1,35 +1,61 @@
 package com.fpa.testeuol.projetocliente.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fpa.testeuol.projetocliente.data.GeoRepository;
+import com.fpa.testeuol.projetocliente.entity.cliente.ClienteModel;
+import com.fpa.testeuol.projetocliente.entity.geo.ClimaDto;
 import com.fpa.testeuol.projetocliente.entity.geo.GeoDto;
 import java.io.BufferedReader;
-import java.io.DataInput;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import com.fpa.testeuol.projetocliente.entity.geo.GeoModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class GeoService {
 
+    private Logger logger = LoggerFactory.getLogger(GeoService.class);
+
     private static final String IP_GEO_API_BASE_URL = "https://ipvigilante.com";
     private static final String WEATHER_GEO_API_BASE_URL = "https://www.metaweather.com/api";
+    private static final String AMAZON_CHECK_IP_WS = "http://checkip.amazonaws.com/";
     private static final String FORMAT = "json";
 
     private ObjectMapper mapper;
+    private GeoRepository repositorioGeo;
 
     @Autowired
-    public GeoService(ObjectMapper mapper){
+    public GeoService(ObjectMapper mapper, GeoRepository repositorioGeo){
         this.mapper = mapper;
+        this.repositorioGeo = repositorioGeo;
+    }
+
+    public GeoModel salvaDadosGeolocalizacao(ClienteModel cliente) throws IOException {
+        GeoDto geoAtual = recuperaGeolocalizacaoAtual();
+        String latitude = geoAtual.getLatitude();
+        String longitude = geoAtual.getLongitude();
+
+        String localId = recuperaIdLocalizacao(latitude, longitude);
+
+        ClimaDto clima = recuperaClimaLocalizacao(localId);
+
+        GeoModel geoModel = new GeoModel();
+        geoModel.setCliente(cliente);
+        geoModel.setCidade(geoAtual.getCityName());
+        geoModel.setMinTemp(Float.parseFloat(clima.getMinTemp()));
+        geoModel.setMaxTemp(Float.parseFloat(clima.getMaxTemp()));
+        geoModel.setCurTemp(Float.parseFloat(clima.getCurTemp()));
+
+        return repositorioGeo.save(geoModel);
     }
 
     public GeoDto recuperaGeolocalizacaoPorIp(String ip) throws IOException {
@@ -40,10 +66,19 @@ public class GeoService {
         return mapper.readValue(geoValues, GeoDto.class);
     }
 
-    public String recuperaIp() throws Exception {
-        URL url = new URL("http://checkip.amazonaws.com/");
-        BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
-        return br.readLine();
+    public GeoDto recuperaGeolocalizacaoAtual() throws IOException {
+        return recuperaGeolocalizacaoPorIp(recuperaIpMaquina());
+    }
+
+    public String recuperaIpMaquina() throws MalformedURLException {
+        URL url = new URL(AMAZON_CHECK_IP_WS);
+
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()))){
+            return br.readLine();
+        } catch (IOException e){
+            logger.error("Erro ao se conectar a API " + AMAZON_CHECK_IP_WS, e);
+            return "0.0.0.0";
+        }
     }
 
     public String recuperaIdLocalizacao(String latitude, String longitude) throws IOException {
@@ -52,6 +87,18 @@ public class GeoService {
         List data = mapper.readValue(stream, List.class);
         HashMap localidadePerto = (HashMap)data.get(0);
         return localidadePerto.get("woeid").toString();
+    }
+
+    public ClimaDto recuperaClimaLocalizacao(String woeId) throws IOException {
+        URL url = new URL(String.format("%s/location/%s", WEATHER_GEO_API_BASE_URL, woeId));
+        ClimaDto clima = new ClimaDto();
+        InputStream stream = url.openStream();
+        HashMap data = mapper.readValue(stream, HashMap.class);
+
+        clima.setMinTemp(data.get("min_temp").toString());
+        clima.setMaxTemp(data.get("max_temp").toString());
+
+        return clima;
     }
 
 }

@@ -1,10 +1,14 @@
 package com.fpa.testeuol.projetocliente.entity.cliente;
 
+import com.fpa.testeuol.projetocliente.entity.geo.GeoModel;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -20,6 +24,10 @@ public class ClienteModel {
 
     @Column(name = "nome")
     private String nome;
+
+    @OneToOne
+    @JoinColumn(name = "id_geo_cliente")
+    private GeoModel geo;
 
     public ClienteModel(){
 
@@ -43,5 +51,13 @@ public class ClienteModel {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public GeoModel getGeo() {
+        return geo;
+    }
+
+    public void setGeo(GeoModel geo) {
+        this.geo = geo;
     }
 }
