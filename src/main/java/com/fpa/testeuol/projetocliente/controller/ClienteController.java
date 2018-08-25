@@ -4,7 +4,6 @@ import com.fpa.testeuol.projetocliente.entity.cliente.ClienteDto;
 import com.fpa.testeuol.projetocliente.exception.ClienteNotFoundException;
 import com.fpa.testeuol.projetocliente.exception.GeoSaveException;
 import com.fpa.testeuol.projetocliente.exception.NomeClienteFormatException;
-import com.fpa.testeuol.projetocliente.response.ClienteApiResponse;
 import com.fpa.testeuol.projetocliente.service.ClienteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
