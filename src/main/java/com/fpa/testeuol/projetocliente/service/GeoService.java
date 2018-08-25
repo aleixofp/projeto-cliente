@@ -64,6 +64,12 @@ public class GeoService {
         return clienteGeoModel;
     }
 
+    /**
+     * Consome WebService ipvigilante para recuperar dados de Geolocalização baseado em IP.
+     * @param ip
+     * @return
+     * @throws IOException
+     */
     public VigilanteGeoDto recuperaGeolocalizacaoPorIp(String ip) throws IOException  {
         URL url = new URL(String.format("%s/%s/%s", IP_GEO_API_BASE_URL, FORMAT, ip));
         InputStream stream = url.openStream();
@@ -76,11 +82,18 @@ public class GeoService {
         return recuperaGeolocalizacaoPorIp(recuperaIpMaquina());
     }
 
+    /**
+     * Consome WebService da Amazon para verificar o ip atual que está sendo acessado.
+     * @return
+     * @throws MalformedURLException
+     */
     public String recuperaIpMaquina() throws MalformedURLException {
         URL url = new URL(AMAZON_CHECK_IP_WS);
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()))){
 
+            // Em alguns ambientes, como UNIX, pode se encontrar mais de 1 IP no host da máquina
+            // Aqui, sempre pega o último IP da lista retornada pela Amazon, que é o que precisamos.
             String[] ips = br.readLine().replace(" ", "").split(",");
             int quantidadeIps = ips.length;
             if (quantidadeIps > 1)
@@ -93,6 +106,12 @@ public class GeoService {
         }
     }
 
+    /**
+     * Recupera dados do clima baseado na localização por ID do usuário (Where on Earth ID - woeid)
+     * @param woeId
+     * @return
+     * @throws IOException
+     */
     public ClimaDto recuperaClimaLocalizacao(String woeId) throws IOException {
         URL url = new URL(String.format("%s/location/%s", WEATHER_GEO_API_BASE_URL, woeId));
         ClimaDto clima = new ClimaDto();
@@ -108,6 +127,14 @@ public class GeoService {
         return clima;
     }
 
+    /**
+     * Recupera o ID Where on Earth baseado na latitude e longitude de acesso.
+     * Com este ID, então é possível obter informações de clima.
+     * @param latitude
+     * @param longitude
+     * @return
+     * @throws IOException
+     */
     private String recuperaIdLocalizacao(String latitude, String longitude) throws IOException {
         URL url = new URL(String.format("%s/location/search/?lattlong=%s,%s", WEATHER_GEO_API_BASE_URL, latitude, longitude));
         InputStream stream = url.openStream();
@@ -116,6 +143,12 @@ public class GeoService {
         return localidadePerto.get("woeid").toString();
     }
 
+    /**
+     * Algoritmo para retornar o clima mais "confiável" baseado no atributo de previsibilidade dos climas consolidados
+     * dados pelo serviço metaweather. Quanto maior a previsibilidade, mais confiável.
+     * @param climasConsolidados
+     * @return
+     */
     private Map recuperaClimaConfiavel(List climasConsolidados){
 
         Map climaConfiavel = new HashMap();

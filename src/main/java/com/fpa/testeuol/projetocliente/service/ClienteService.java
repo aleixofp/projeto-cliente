@@ -43,6 +43,7 @@ public class ClienteService {
         ClienteModel clienteModel = new ClienteModel(cliente);
 
         try {
+            // Gera os dados de geolocalização do cliente. (clima, cidade e etc.)
             ClienteGeoModel clienteGeoModel = servicoGeo.salvaDadosGeolocalizacao(clienteModel);
             clienteModel.setClienteGeo(clienteGeoModel);
         } catch (IOException e) {
