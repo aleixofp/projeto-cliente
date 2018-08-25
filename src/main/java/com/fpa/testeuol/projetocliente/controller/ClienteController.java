@@ -80,7 +80,7 @@ public class ClienteController {
      * @return
      */
     @PutMapping(value="/atualizar", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ClienteDto> atualizar(@PathVariable("idCliente") Long idCliente, @RequestParam String novoNome)
+    public ResponseEntity<ClienteDto> atualizar(@RequestParam("idCliente") Long idCliente, @RequestParam String novoNome)
     {
         logger.info(String.format("Atualizando cliente ID %d", idCliente));
 
