@@ -55,16 +55,16 @@ public class ClienteController {
     }
 
     /**
-     * Insere um cliente na base junto com seus dados de geolocalização.
-     * @param cliente - Corpo de inserção (id, nome e geo)
+     * Insere um novo cliente na base junto com seus dados de geolocalização.
+     * @param nomeCliente
      * @return
      */
     @PostMapping(value="/inserir", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ClienteDto> inserir(@RequestBody ClienteDto cliente){
+    public ResponseEntity<ClienteDto> inserir(@RequestParam String nomeCliente){
         logger.info("Inserindo novo cliente...");
 
         try {
-            ClienteDto dadosInseridos = servicoCliente.insere(cliente);
+            ClienteDto dadosInseridos = servicoCliente.insere(nomeCliente);
             return ResponseEntity.status(HttpStatus.CREATED).body(dadosInseridos);
         } catch (NomeClienteFormatException e){
             logger.error(e.getMessage(), e);
@@ -88,8 +88,10 @@ public class ClienteController {
         try {
             ClienteDto dadosAtualizados = servicoCliente.atualiza(idCliente, novoNome);
             return ResponseEntity.status(HttpStatus.OK).body(dadosAtualizados);
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).build();
+        } catch (ClienteNotFoundException cnfe){
+            return ResponseEntity.notFound().build();
+        } catch (NomeClienteFormatException ncfe){
+            return ResponseEntity.badRequest().build();
         }
 
     }

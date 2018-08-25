@@ -41,6 +41,10 @@ public class ClienteModel {
         }
     }
 
+    public ClienteModel(String nome){
+        this.nome = nome;
+    }
+
     public Long getId() {
         return id;
     }

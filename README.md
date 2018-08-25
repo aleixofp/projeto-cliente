@@ -22,10 +22,6 @@ Gerenciamento de dependências e build.
 
 Documentação de toda parte REST da aplicação. Além de documentar, é possível testar os controladores (métodos) de toda a aplicação através de uma interface amigável no contexto: /swagger-ui.html.
 
-## IntelliJ IDEA
-
-IDE utilizada para desenvolvido. Versão 2017.2. Ótima integração com Spring e Maven, assim como velocidade e inteligência de código.
-
 # Iniciando
 
 Necessário: Maven.
@@ -44,12 +40,24 @@ Se preferir rodar em um servidor (para fins de Produção por exemplo), o Maven 
 `mvn clean install`
 O .war da aplicação estará disponível em /target (raiz do projeto).
 
+## Acesso
+
+`{urlBase}/projeto-cliente`
+
+Exemplo: http://localhost:8080/projeto-cliente (local)
+
 # REST
 
 Nesta aplicação, foi implementado o framework Swagger para documentação e testes de serviços REST. Utiliza-se de uma interface gráfica "swagger-ui".
 
 ![swagger](https://raw.githubusercontent.com/aleixofp/projeto-cliente/master/src/main/resources/static/imagem-swagger.png)
 
-# Documentação
+Acesso:
+
+`{urlBase}/projeto-cliente/swagger-ui.html`
+
+Exemplo: http://localhost:8080/projeto-cliente/swagger-ui.html (local)
+
+# Documentação completa
 
 Toda a documentação se encontra na pasta [docs](https://github.com/aleixofp/projeto-cliente/tree/master/docs) do projeto.

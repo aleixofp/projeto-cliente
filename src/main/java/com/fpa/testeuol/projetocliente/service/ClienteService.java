@@ -32,15 +32,13 @@ public class ClienteService {
         this.servicoGeo = servicoGeo;
     }
 
-    public ClienteDto insere(ClienteDto cliente) throws NomeClienteFormatException, GeoSaveException {
-
-        String nomeCliente = cliente.getNome();
+    public ClienteDto insere(String nomeCliente) throws NomeClienteFormatException, GeoSaveException {
 
         if (!isNomeCorreto(nomeCliente)){
             throw new NomeClienteFormatException(String.format("Não foi possível inserir um novo cliente, causa: nome = %s", nomeCliente));
         }
 
-        ClienteModel clienteModel = new ClienteModel(cliente);
+        ClienteModel clienteModel = new ClienteModel(nomeCliente);
 
         try {
             // Gera os dados de geolocalização do cliente. (clima, cidade e etc.)
