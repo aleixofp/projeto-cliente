@@ -8,7 +8,7 @@ O projeto foi desenvolvido no IntelliJ IDEA. Esta IDE tem uma ótima integraçã
 
 ## Spring Boot
 
-Para a aplicação em si. Roda o servidor de forma que outras configurações de servidores externas não sejam necessárias, assim temos uma aplicação que rodaria em qualquer máquina.
+Plataforma de toda a aplicação para o desenvolvedor, rodando o servidor de forma que outras configurações de servidores externas não sejam necessárias, assim temos uma aplicação fácil de deploy e possível de rodar em todas máquinas.
 
 ## H2 database - Banco de dados
 
