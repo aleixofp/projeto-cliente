@@ -25,6 +25,8 @@ Usuário: adm - Senha: uol
 
 Exemplo (local): http://localhost:8080/projeto-cliente/banco
 
+obs: se não estiver exibindo as tabelas, configurar JDBC url para: jdbc:h2:file:./testdb
+
 
 ## Maven
 
