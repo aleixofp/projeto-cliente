@@ -1,11 +1,12 @@
 package com.fpa.testeuol.projetocliente.entity.cliente;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.beans.BeanUtils;
 
 public class ClienteGeoDto {
 
 	private Long id;
-	private Long idCliente;
 	private String cidade;
 
 	@JsonProperty("temperaturaMinima")
@@ -15,20 +16,18 @@ public class ClienteGeoDto {
 	@JsonProperty("temperaturaAtual")
 	private Float curTemp;
 
+	public ClienteGeoDto(ClienteGeoModel clienteGeoModel){
+		if (clienteGeoModel != null){
+			BeanUtils.copyProperties(clienteGeoModel, this);
+		}
+	}
+
 	public Long getId() {
 		return id;
 	}
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public Long getIdCliente() {
-		return idCliente;
-	}
-
-	public void setIdCliente(Long idCliente) {
-		this.idCliente = idCliente;
 	}
 
 	public String getCidade() {

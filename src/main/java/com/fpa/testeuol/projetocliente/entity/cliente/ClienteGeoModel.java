@@ -2,22 +2,26 @@ package com.fpa.testeuol.projetocliente.entity.cliente;
 
 import com.fpa.testeuol.projetocliente.entity.cliente.ClienteModel;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import org.springframework.beans.BeanUtils;
 
 @Entity
 @Table(name = "cliente_geo")
 public class ClienteGeoModel {
 
 	@Id
-	@SequenceGenerator(allocationSize = 1, initialValue = 1, name = "id_geo_cliente_seq")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator="id_geo_cliente_seq")
+	@SequenceGenerator(allocationSize = 1, initialValue = 1, name="id_geo_cliente_seq", sequenceName = "id_geo_cliente_seq")
 	@Column(name = "id_geo_cliente")
 	private Long id;
 
@@ -38,6 +42,12 @@ public class ClienteGeoModel {
 	private Float curTemp;
 
 	public ClienteGeoModel() {}
+
+	public ClienteGeoModel(ClienteGeoDto clienteGeoDto){
+		if (clienteGeoDto != null){
+			BeanUtils.copyProperties(clienteGeoDto, this);
+		}
+	}
 
 	public Long getId() {
 		return id;

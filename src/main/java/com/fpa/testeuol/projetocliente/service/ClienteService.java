@@ -4,8 +4,12 @@ import com.fpa.testeuol.projetocliente.data.ClienteRepository;
 import com.fpa.testeuol.projetocliente.entity.cliente.ClienteDto;
 import com.fpa.testeuol.projetocliente.entity.cliente.ClienteModel;
 
+import com.fpa.testeuol.projetocliente.exception.ClienteNotFoundException;
+import com.fpa.testeuol.projetocliente.exception.GeoSaveException;
+import com.fpa.testeuol.projetocliente.exception.NomeClienteFormatException;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.fpa.testeuol.projetocliente.entity.cliente.ClienteGeoModel;
@@ -28,34 +32,43 @@ public class ClienteService {
         this.servicoGeo = servicoGeo;
     }
 
-    public ClienteDto insere(String nome) {
-        if (nome == null || nome.isEmpty()){
-            throw new NullPointerException("Não é possivel inserir cliente com este nome: {" + nome + "}");
+    public ClienteDto insere(ClienteDto cliente) throws NomeClienteFormatException, GeoSaveException {
+
+        String nomeCliente = cliente.getNome();
+
+        if (!isNomeCorreto(nomeCliente)){
+            throw new NomeClienteFormatException(String.format("Não foi possível inserir um novo cliente, causa: nome = %s", nomeCliente));
         }
-        ClienteModel clienteInserido = this.repositorioCliente.save(new ClienteModel(nome));
+
+        ClienteModel clienteModel = new ClienteModel(cliente);
 
         try {
-            ClienteGeoModel clienteGeo = servicoGeo.salvaDadosGeolocalizacao(clienteInserido);
-            clienteInserido.setGeo(clienteGeo);
+            ClienteGeoModel clienteGeoModel = servicoGeo.salvaDadosGeolocalizacao(clienteModel);
+            clienteModel.setClienteGeo(clienteGeoModel);
         } catch (IOException e) {
-            logger.error("Não foi possivel salvar dados de geolocalização do cliente salvo: " + nome, e);
+            logger.error(e.getMessage(), e);
+            throw new GeoSaveException("Não foi possível salvar os dados de geolocalização do cliente", e);
         }
 
-        return new ClienteDto(clienteInserido);
+        return new ClienteDto( repositorioCliente.save(clienteModel) );
     }
 
-    public ClienteDto recupera(Long idCliente) {
-        ClienteModel cliente = this.repositorioCliente.findById(idCliente).orElse(null);
+    public ClienteDto recupera(Long idCliente) throws ClienteNotFoundException {
+        Optional<ClienteModel> cliente = this.repositorioCliente.findById(idCliente);
 
-        if (cliente == null){
-            throw new NullPointerException("Não foi encontrado cliente com ID " + idCliente + " na base.");
+        if (!cliente.isPresent()){
+            throw new ClienteNotFoundException(String.format("Cliente ID %d não encontrado.", idCliente));
         }
 
-        return new ClienteDto(cliente);
+        return new ClienteDto( cliente.get() );
     }
 
-    public void deleta(Long idCliente) {
-        repositorioCliente.deleteById(idCliente);
+    public void deleta(Long idCliente) throws ClienteNotFoundException {
+        Optional<ClienteModel> cliente = repositorioCliente.findById(idCliente);
+        if (!cliente.isPresent()){
+            throw new ClienteNotFoundException(String.format("Não foi possível deletar cliente inexistente ID: %d", idCliente));
+        }
+        repositorioCliente.delete(cliente.get());
     }
 
     public List<ClienteDto> listaClientes(){
@@ -63,5 +76,24 @@ public class ClienteService {
                 .stream()
                 .map(ClienteDto::new)
                 .collect(Collectors.toList());
+    }
+
+    public ClienteDto atualiza(Long idCliente, String novoNome) throws ClienteNotFoundException, NomeClienteFormatException {
+
+        Optional<ClienteModel> clienteBase = repositorioCliente.findById(idCliente);
+        if (!clienteBase.isPresent()){
+            throw new ClienteNotFoundException(String.format("Não foi possível atualizar cliente ID %d: não encontrado.", idCliente));
+        } else if (!isNomeCorreto(novoNome)){
+            throw new NomeClienteFormatException(String.format("Não foi possível atualizar cliente ID %d: nome = %s", idCliente, novoNome));
+        }
+
+        ClienteModel clienteAtualizado = clienteBase.get();
+        clienteAtualizado.setNome(novoNome);
+
+        return new ClienteDto( repositorioCliente.save(clienteAtualizado) );
+    }
+
+    private boolean isNomeCorreto(String nome){
+        return nome != null && !nome.isEmpty();
     }
 }

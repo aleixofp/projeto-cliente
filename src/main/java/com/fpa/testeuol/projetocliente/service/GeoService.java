@@ -1,7 +1,6 @@
 package com.fpa.testeuol.projetocliente.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fpa.testeuol.projetocliente.data.ClienteGeoRepository;
 import com.fpa.testeuol.projetocliente.entity.cliente.ClienteModel;
 import com.fpa.testeuol.projetocliente.entity.geo.ClimaDto;
 import com.fpa.testeuol.projetocliente.entity.geo.VigilanteGeoDto;
@@ -32,14 +31,13 @@ public class GeoService {
     private static final String FORMAT = "json";
 
     private ObjectMapper mapper;
-    private ClienteGeoRepository repositorioGeo;
 
     @Autowired
-    public GeoService(ObjectMapper mapper, ClienteGeoRepository repositorioGeo){
+    public GeoService(ObjectMapper mapper){
         this.mapper = mapper;
-        this.repositorioGeo = repositorioGeo;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public ClienteGeoModel salvaDadosGeolocalizacao(ClienteModel cliente) throws IOException {
 
         logger.info("Salvando dados de Geolocalização do cliente");
@@ -56,17 +54,17 @@ public class GeoService {
 
         ClimaDto clima = recuperaClimaLocalizacao(localId);
 
-        ClienteGeoModel clienteGeo = new ClienteGeoModel();
-        clienteGeo.setCliente(cliente);
-        clienteGeo.setCidade(geoAtual.getCityName());
-        clienteGeo.setMinTemp(Float.parseFloat(clima.getMinTemp()));
-        clienteGeo.setMaxTemp(Float.parseFloat(clima.getMaxTemp()));
-        clienteGeo.setCurTemp(Float.parseFloat(clima.getCurTemp()));
+        ClienteGeoModel clienteGeoModel = new ClienteGeoModel();
+        clienteGeoModel.setCliente(cliente);
+        clienteGeoModel.setCidade(geoAtual.getCityName());
+        clienteGeoModel.setMinTemp(Float.parseFloat(clima.getMinTemp()));
+        clienteGeoModel.setMaxTemp(Float.parseFloat(clima.getMaxTemp()));
+        clienteGeoModel.setCurTemp(Float.parseFloat(clima.getCurTemp()));
 
-        return repositorioGeo.save(clienteGeo);
+        return clienteGeoModel;
     }
 
-    public VigilanteGeoDto recuperaGeolocalizacaoPorIp(String ip) throws IOException {
+    public VigilanteGeoDto recuperaGeolocalizacaoPorIp(String ip) throws IOException  {
         URL url = new URL(String.format("%s/%s/%s", IP_GEO_API_BASE_URL, FORMAT, ip));
         InputStream stream = url.openStream();
         HashMap data = mapper.readValue(stream, HashMap.class);
@@ -95,14 +93,6 @@ public class GeoService {
         }
     }
 
-    public String recuperaIdLocalizacao(String latitude, String longitude) throws IOException {
-        URL url = new URL(String.format("%s/location/search/?lattlong=%s,%s", WEATHER_GEO_API_BASE_URL, latitude, longitude));
-        InputStream stream = url.openStream();
-        List data = mapper.readValue(stream, List.class);
-        HashMap localidadePerto = (HashMap)data.get(0);
-        return localidadePerto.get("woeid").toString();
-    }
-
     public ClimaDto recuperaClimaLocalizacao(String woeId) throws IOException {
         URL url = new URL(String.format("%s/location/%s", WEATHER_GEO_API_BASE_URL, woeId));
         ClimaDto clima = new ClimaDto();
@@ -116,6 +106,14 @@ public class GeoService {
         clima.setCurTemp(climaConfiavel.get("the_temp").toString());
 
         return clima;
+    }
+
+    private String recuperaIdLocalizacao(String latitude, String longitude) throws IOException {
+        URL url = new URL(String.format("%s/location/search/?lattlong=%s,%s", WEATHER_GEO_API_BASE_URL, latitude, longitude));
+        InputStream stream = url.openStream();
+        List data = mapper.readValue(stream, List.class);
+        HashMap localidadePerto = (HashMap)data.get(0);
+        return localidadePerto.get("woeid").toString();
     }
 
     private Map recuperaClimaConfiavel(List climasConsolidados){
