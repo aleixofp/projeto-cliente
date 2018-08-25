@@ -10,6 +10,10 @@ O projeto foi desenvolvido no IntelliJ IDEA. Esta IDE tem uma ótima integraçã
 
 Para a aplicação em si. Roda o servidor de forma que outras configurações de servidores externas não sejam necessárias, assim temos uma aplicação que rodaria em qualquer máquina.
 
+## Spring Data JPA
+
+Framework do Spring que providencia suporte para criação de repositórios, modelos de banco de dados e gerencia todo o CRUD da aplicação.
+
 ## H2 database - Banco de dados
 
 Banco de dados "in-memory". Configuração rápida, confiável e suave integração com o Spring Data (JPA).
