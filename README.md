@@ -14,9 +14,17 @@ Para a aplicação em si. Roda o servidor de forma que outras configurações de
 
 Banco de dados "in-memory". Configuração rápida, confiável e suave integração com o Spring Data (JPA).
 
+Para acessar o banco de dados na aplicação:
+{urlBase}/projeto-cliente/banco
+
+Usuário: adm - Senha: uol
+
+Exemplo (local): http://localhost:8080/projeto-cliente/banco
+
+
 ## Maven
 
-Gerenciamento de dependências e build.
+Gerenciamento de dependências e build do projeto. O projeto maven foi gerado a partir da ferramenta Spring Initializr, citada anteriormente.
 
 ## Swagger
 
@@ -44,7 +52,7 @@ O .war da aplicação estará disponível em /target (raiz do projeto).
 
 `{urlBase}/projeto-cliente`
 
-Exemplo: http://localhost:8080/projeto-cliente (local)
+Exemplo (local): http://localhost:8080/projeto-cliente
 
 # REST
 
@@ -56,7 +64,7 @@ Acesso:
 
 `{urlBase}/projeto-cliente/swagger-ui.html`
 
-Exemplo: http://localhost:8080/projeto-cliente/swagger-ui.html (local)
+Exemplo (local): http://localhost:8080/projeto-cliente/swagger-ui.html 
 
 # Documentação completa
 
