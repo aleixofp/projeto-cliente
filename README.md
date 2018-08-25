@@ -54,9 +54,9 @@ O .war da aplicação estará disponível em /target (raiz do projeto).
 
 Exemplo (local): http://localhost:8080/projeto-cliente
 
-# REST
+# Testes e métodos REST
 
-Nesta aplicação, foi implementado o framework Swagger para documentação e testes de serviços REST. Utiliza-se de uma interface gráfica "swagger-ui".
+Para documentação e teste dos métodos backend, nesta aplicação, foi implementado o framework Swagger. Para ajudar, utiliza-se de uma interface gráfica leve e intuitiva.
 
 ![swagger](https://raw.githubusercontent.com/aleixofp/projeto-cliente/master/src/main/resources/static/imagem-swagger.png)
 
@@ -64,7 +64,7 @@ Acesso:
 
 `{urlBase}/projeto-cliente/swagger-ui.html`
 
-Exemplo (local): http://localhost:8080/projeto-cliente/swagger-ui.html 
+Exemplo (local): http://localhost:8080/projeto-cliente/swagger-ui.html
 
 # Documentação completa
 
