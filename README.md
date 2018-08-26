@@ -10,6 +10,8 @@ O projeto foi desenvolvido no IntelliJ IDEA. Esta IDE tem uma ótima integraçã
 
 Plataforma de toda a aplicação para o desenvolvedor, rodando o servidor de forma que outras configurações de servidores externas não sejam necessárias, assim temos uma aplicação fácil de deploy e possível de rodar em todas máquinas.
 
+O projeto foi desenvolvido no Java 8.
+
 ## Spring Data JPA
 
 Framework do Spring que providencia suporte para criação de repositórios, modelos de banco de dados e gerencia todo o CRUD da aplicação.
